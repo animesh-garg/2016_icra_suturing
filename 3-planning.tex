@@ -1,3 +1,6 @@
+\documentclass[0-suturing.tex]{subfiles}
+\begin{document}
+
 \section{Needle Path Planning}
 \noindent \textbf{Optimization Model}
 The trajectory is discretized into time intervals $\mathcal{T} = \{0,1,\ldots,T\}$.
@@ -9,11 +12,10 @@ At each time step the needle's pose is parametrized as
 $X_t = \begin{bmatrix}
     R_t & p_t \\ 0^T & 1
 \end{bmatrix} \in SE(3)$
-where $R_t \in SO(3)$ is a rotation matrix and 
+where $R_t \in SO(3)$ is a rotation matrix and
 $ p_t \in  \mathbb{R}^3 $ is a position.
 
-The control input is parametrized by the needle's radius $r_k$ and the distance $\Delta$, by which the needle is inserted at each time step. We note that $r_k$ is chosen from a discrete set available needle radii. And while $\Delta$ can be selected to be different for each time step, prior empirical results show that the optimization result in uneven distribution of $\Delta$ at each time step resulting undesirable trajectories. 
-
+The control input is parametrized by the needle's radius $r_k$ and the distance $\Delta$, by which the needle is inserted at each time step. We note that $r_k$ is chosen from a discrete set available needle radii. And while $\Delta$ can be selected to be different for each time step, prior empirical results show that the optimization result in uneven distribution of $\Delta$ at each time step resulting undesirable trajectories.
 \begin{equation*}
 \begin{aligned}
 & \underset{\mathcal{X},\, r_k,\, \Delta}{\text{minimize}}
@@ -46,10 +48,10 @@ R & p \\
 \end{aligned}
 \end{equation}
 
-\noindent The action of an element $g \in SE(3)$ on a point $p \in \mathbb{R}^3$ is given by 
+\noindent The action of an element $g \in SE(3)$ on a point $p \in \mathbb{R}^3$ is given by
 $g = \begin{bmatrix}
 R & p \\
-0 & 1 
+0 & 1
 \end{bmatrix},
 \quad g \cdot p = Rp + t $.
 
@@ -59,17 +61,17 @@ R & p \\
 % \begin{bmatrix}
 % R & p \\
 % 0 & 1
-% \end{bmatrix} \\ 
+% \end{bmatrix} \\
 % & g \cdot p = Rp + t
 % \end{aligned}
 % \end{equation}
 
 Trajectory optimization methods that use sequential convex optimization, iteratively update a trajectory until the all the problem constraints are satisfied and objective function reaches a local minimum. However, optimization directly over the trajectory in pose representation (homogeneous coordinates in our case) can lead to poor results and slow convergence rates.
 
-Rotation parametrizations such as quaternions or rotation matrices are over-constrained and can cause the optimization to be numerically unstable iterating over degenerate solutions. 
+Rotation parametrizations such as quaternions or rotation matrices are over-constrained and can cause the optimization to be numerically unstable iterating over degenerate solutions.
 While on the other hand, axis angle representations have the correct number of degrees of freedom but deformation at the poles of the configuration space severely slows down convergence.
 
-Since $SE(3)$ is a differentiable manifold, we can instead optimize over the manifold using the corresponding Lie algebra, $\mathfrak{se}(3)$, which is defined as the tangent vector space at the identity of SE(3). An excellent introduction in lie algebraic approach in pose registration in provided by~\citet{Agrawal2006Lie}. 
+Since $SE(3)$ is a differentiable manifold, we can instead optimize over the manifold using the corresponding Lie algebra, $\mathfrak{se}(3)$, which is defined as the tangent vector space at the identity of SE(3). An excellent introduction in lie algebraic approach in pose registration in provided by~\citet{Agrawal2006Lie}.
 
 \noindent The Lie algebra of $SE(3)$ is given by
 \begin{equation}
@@ -108,7 +110,7 @@ $\omega = (\omega_x, \omega_y, \omega_z)^T$ and is an element of the Lie algebra
     \label{eq:logMap}
 \end{equation}
 
-\noindent where 
+\noindent where
 \begin{equation*}
 \begin{aligned}
     A^{-1} &= I - \frac{1}{2}\hat{\omega} +
@@ -146,7 +148,7 @@ With equations \eqref{eq:logMap} and \eqref{eq:expMap}, we can convert an elemen
 
 \subsection{Modelling Uncertainty }
 \todo{fill out the bsp formulation.}
-Write about how to use the equations of the covariance matrix in the optimizaiton formulation using analytical derivatives. 
+Write about how to use the equations of the covariance matrix in the optimizaiton formulation using analytical derivatives.
 
 
 
@@ -182,3 +184,5 @@ of a quality suture.
 Converting the listed suture principles into a list of analytic
 equations allows for the planning algorithm to be automated
 and optimized against the suture guidelines.
+
+\end{document}

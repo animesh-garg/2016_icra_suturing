@@ -4,6 +4,7 @@
 \input{preamble}
 
 \usepackage{blindtext}
+\usepackage{subfiles}
 
 %===============================================================
 
@@ -53,12 +54,12 @@ We demonstrate our approach on a 4-throw continuous suturing task with dVRK on a
 % Our system uses user input for providing wound outline and then parametrizes the problem automatically compute 
 \end{abstract} 
 
-\input{1-intro+relWork}
-\input{2-problem}
-\input{3-planning}
-\input{4-systemDesign}
-\input{5-expts}
-\input{6-fw-conc}
+\subfile{1-intro+relWork}
+\subfile{2-problem}
+\subfile{3-planning}
+\subfile{4-systemDesign}
+\subfile{5-expts}
+\subfile{6-fw-conc}
 
 % \vspace{-5pt}
 \subsection*{Acknowledgements}
