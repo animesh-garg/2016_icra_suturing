@@ -1,0 +1,72 @@
+\documentclass[letterpaper, 10 pt, conference]{ieeeconf}
+
+\let\labelindent\relax
+\input{preamble}
+
+\usepackage{blindtext}
+
+%===============================================================
+
+\title{\LARGE \bf
+Autonomous Continuous Suturing on dVRK with Curvature Constrained Trajectory Optimization under Needle Pose Uncertainty
+% Autonomous Continuous Suture under Uncertainty with Trajectory Optimization for  on the da Vinci Research Kit. 
+}
+
+\author{%
+Siddarth Sen*$^{1}$, 
+Animesh Garg*$^{2}$,
+David Gealy$^{3}$,
+Yiming Jen$^{1}$, 
+Stephen McKinley$^{3}$,
+% W Douglas Boyd$^{4}$,
+Ken Goldberg$^{2}$%
+\thanks{\hrule \vspace{3pt} * These authors contributed equally to the paper}
+\thanks{The authors are with University of California, Berkeley CA USA}%
+\thanks{$^{1}$EECS, \texttt{\{siddarthsen, yjen\}@berkeley.edu}}%
+\thanks{$^{2}$IEOR \& EECS, \texttt{\{animesh.garg, goldberg\}@berkeley.edu}}%
+\thanks{$^{3}$Mechanical Engineering, \texttt{\{dgealy, mckinley\}@berkeley.edu}}%
+%Authors are with the Department of Electrical Engineering and Computer Sciences, University of California at Berkeley, CA, USA.}
+}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+\pagestyle{empty}
+
+%==START SECTION==============================
+\begin{abstract}
+Suturing is a frequently occurring yet challenging and time consuming task during Robot Assisted Minimally Invasive Surgery. And automation of suturing has the potential reduce both time and dexterity required for this subtask. 
+This work focuses on continuous suturing, a technique that involves multiple throws of suture with a knot only at the end and is often used in procedures such as anastomosis requiring long-wound closures.
+However, the some of the challenges in automation of such a complex task are modelling of needle-tissue interactions, maintaining needle orientation while grasping and hand-off and difficulty in real-time needle pose estimation. Moreover, careful hierarchical planning is required for robust long-term execution of continuous suturing. 
+
+We propose a framework that enables automation of the continuous suturing task. We build on state-of-the-art autonomous task segmentation algorithms for suturing to construct finite state machine~(FSM) with sub-tasks. 
+Our system parametrizes each problem instance with suture width, suture depth and a spline along the wound. It then computes the number of suture throws required and pair of entry-exit points along with the best needle size. Each suture throw is modeled as trajectory planning along with needle pose estimation through a joint belief space optimization problem.
+We use a best-practice reference trajectory as an initialization to sequential convex programming solver. Furthermore, we have devised a novel needle alignment attachment for the gripper jaw that passively guides the needle into a known pose upon gripper closure. The device improves needle hand-off accuracy by \todo{x\%} compared to using current needle driver; and hence reduces the need for re-alignment before pushing needle in tissue.  
+
+We demonstrate our approach on a 4-throw continuous suturing task with dVRK on a planar tissue model that contains skin and subcutaneous fat similar to task in Fundamental Skills of Robotic Surgery, and evaluate performance with OSATS as well as against Suturing demonstrations from the JIGSAWS dataset~\cite{gao2014jhu} on Accuracy \& Time. Our results indicate that we are \todo{xx} slower than experts and \todo{xx} with novices. We also evaluate the performance on a more complex suturing model with flexible vertical flaps and evaluate performance on time to completion and rate of success.\\
+\todo{A tad too long--trim text, move to intro}
+
+% This study formulates the problem of trajectory planning
+% along with needle pose estimation as a joint belief space optimization problem. The framework allows autonomous discovery of a robust path in presence a asymmetric uncertainty model for needle manipulation. Furthermore, the system uses a reference trajectory modelled with best-practices in surgical training to provide improved initialization for the sequential convex programming solver.
+
+% Our system uses user input for providing wound outline and then parametrizes the problem automatically compute 
+\end{abstract} 
+
+\input{1-intro+relWork}
+\input{2-problem}
+\input{3-planning}
+\input{4-systemDesign}
+\input{5-expts}
+\input{6-fw-conc}
+
+% \vspace{-5pt}
+\subsection*{Acknowledgements}
+\label{sec:ack}
+{\small This work is supported in part by a seed grant from the UC Berkeley Center for Information Technology in the Interest of Science (CITRIS), and by the U.S.\ National Science Foundation under Award IIS-1227536: Multilateral Manipulation by Human-Robot Collaborative Systems. We thank Intuitive Surgical, Simon DiMao, and the dVRK community for support; NVIDIA for computing equipment grants; Andy Chou and Susan Lim for developmental grants; and Dr. Walter Doug Boyd for insight and advice and \todo{XX YY} for revising the manuscript.}
+
+
+\bibliographystyle{IEEEtranN}%ordered refs %also requires natbib-sort&compress
+% \bibliographystyle{IEEEtrans}%alphabetical refs
+\bibliography{library,palpationCASE,suturing}
+\end{document}
