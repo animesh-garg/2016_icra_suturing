@@ -3,11 +3,7 @@
 
 \section{Needle Path Planning}
 \noindent \textbf{Optimization Model}
-The trajectory is discretized into time intervals $\mathcal{T} = \{0,1,\ldots,T\}$.
-
-
-
-$\mathcal{T} \in [0, 1, \ldots, \mathcal{T}]$.
+The trajectory is discretized into time intervals $\mathcal{T} = \{0,1,\ldots,T\}$. 
 At each time step the needle's pose is parametrized as
 $X_t = \begin{bmatrix}
     R_t & p_t \\ 0^T & 1
@@ -16,23 +12,71 @@ where $R_t \in SO(3)$ is a rotation matrix and
 $ p_t \in  \mathbb{R}^3 $ is a position.
 
 The control input is parametrized by the needle's radius $r_k$ and the distance $\Delta$, by which the needle is inserted at each time step. We note that $r_k$ is chosen from a discrete set available needle radii. And while $\Delta$ can be selected to be different for each time step, prior empirical results show that the optimization result in uneven distribution of $\Delta$ at each time step resulting undesirable trajectories.
-\begin{equation*}
-\begin{aligned}
+
+The planning problem can be described by the following non-convex, trajectory
+optimization problem:
+
+
+% \begin{equation}
+\begin{align}
 & \underset{\mathcal{X},\, r_k,\, \Delta}{\text{minimize}}
-& & \alpha_\Delta \mathcal{C}_\Delta \\
+& & \alpha_\Delta \mathcal{C}_\Delta + \alpha_{Entry} C_{Entry} \\
 & \text{subject to}
 & & f_{collision}(\mathcal{X}_t, \mathcal{O}) > d_{safe}, & \forall t  \\
 & & & curve(\mathcal{X}_{t+1}, \mathcal{X}_t) = r_k, & \forall t  \\
 & & & \|p_i-p_1\|_2^2 < \epsilon \\
 & & & \|p_f-p_T\|_2^2 < \epsilon \\
-\end{aligned}
-\end{equation*}
+& & & T \Delta - 2 \pi l_{max}r_k - 2l_{gripper} < 0 
+\end{align}
+% \end{equation}
 
-The above formulation results in smooth trajectories of constant curvature that
-avoid obstacles and pass through the needle entry and exit points. We use the
-signed distance between each point in the trajectory and the incision mesh to
-check for collision. The needle path is constrained to a constant curvature to
-minimize tissue deformation and damage.
+The costs and constraints in the above formulation are described below:
+
+\subsubsection{Kinematic Constraints (Eq. (3))}
+In order to minimize tissue damage, optimal needle trajectories should follow constant curvature paths through tissue. This condition is enforced by ensuring the curvature between timesteps along the trajectory remain 
+constant. The constrained can be expressed expressed using Lie algebra defined on the SE(3) group described in the next section.
+\begin{equation}
+    X_{t+1} =  \text{exp}(\hat{\omega}) \cdot X_{t}
+\end{equation}
+Where $\omega = \begin{bmatrix} 0 & 0 & \Delta & \Delta r_k & 0 & 0\end{bmatrix}$.
+This expression can be transformed into a standard non-convex equality constraint using the matrix log map:
+\begin{equation}
+    \log(X_{t+1} \cdot (\text{exp}(\hat{\omega}) \cdot X_{t})^{-1})^{\vee} = 0_6   
+\end{equation}
+
+\subsubsection{Collision Constraint (Eq. (2))}
+We impose constraints to ensure that our trajectory avoids collision with a pre-defined avoidance volume.
+This is a mesh can be constructed suture characteristics(width, depth) provided by a surgeon. Our technique
+also allows this mesh to be general and non convex. This would allow mesh construction from visual inputs from sensory tools such as endoscopic cameras or ultrasound.  Hierarchical Approximate Convex Decomposition(HACD) \todo{cite} is used to decompose a given avoidance volume into a set of convex meshes 
+$\mathcal{O} = \{O_1, \ldots, O_m\}$. We avoid collisions by ensuring that the signed distance between each 
+point in the trajectory and each convex mesh in $\mathcal{O}$ is greater than a user defined safety margin $d_{safe}$. 
+
+
+\subsubsection{Entry and Exit Point Constraints (Eq. (4) and (5))}
+We define a maximum allowable error in $l_2$ distance $\epsilon$ for the start and end points of our trajectory.
+
+
+\subsubsection{Needle Length Constraints (Eq. (6)) }
+Our optimization needs to generate needle trajectories that are feasible within the physical dimensions of the needle. \todo{rephrase this}. 
+The length of the trajectory can by approximated as $T\Delta$. In order to perform a successful needle insertion and pull through, the needle length needs to be longer than the trajectory length, and the two gripper widths. 
+The maximum length of a needle is defined by the radius of curvature of the needle and the proportion of a full circle the needle's arc carves out. 
+For most surgical applications needle arcs are either $\frac{3}{8}$, $\frac{1}{2}$, $\frac{5}{8}$ of a full circle. 
+Thus we can define our max needle length as $2 \pi l_{max}r_k$ where $l_{max} = \frac{5}{8}$.
+The full constraint then is reformulated in standard form in equation 6.
+
+
+\subsubsection{Costs (Eq. (1))}
+To penalize tissue damage we opimize for the smallest needle trajectory that satisfies our constraints.
+We approximate the trajectory length as:
+\begin{equation}
+    C_{\Delta} = T\Delta 
+\end{equation}
+Surgical best practices suggest that needles should enter the tissue surface in a direction close to the surface normal.
+We can use the lie algebra to express the constraint as the following:
+\begin{equation}
+    C_{Entry} = \|\log(X_f \cdot X_T^{-1})^{\vee}\|^2_2
+\end{equation}
+
 
 \subsection{\textbf{Re-parametrization of Pose Constraints}}
 Generating collision-free, constant curvature trajectories in 3D space is challenging because it requires planning in the Special Euclidean Group in 3D, i.e. $SE(3)$ configuration space.
