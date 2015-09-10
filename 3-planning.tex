@@ -3,7 +3,11 @@
 
 \section{Needle Path Planning}
 \noindent \textbf{Optimization Model}
-The trajectory is discretized into time intervals $\mathcal{T} = \{0,1,\ldots,T\}$. 
+
+The trajectory is discretized into time intervals $\mathcal{T} = \{0,1,\ldots,T\}$.
+
+
+$\mathcal{T} \in [0, 1, \ldots, \mathcal{T}]$.
 At each time step the needle's pose is parametrized as
 $X_t = \begin{bmatrix}
     R_t & p_t \\ 0^T & 1
@@ -13,11 +17,7 @@ $ p_t \in  \mathbb{R}^3 $ is a position.
 
 The control input is parametrized by the needle's radius $r_k$ and the distance $\Delta$, by which the needle is inserted at each time step. We note that $r_k$ is chosen from a discrete set available needle radii. And while $\Delta$ can be selected to be different for each time step, prior empirical results show that the optimization result in uneven distribution of $\Delta$ at each time step resulting undesirable trajectories.
 
-The planning problem can be described by the following non-convex, trajectory
-optimization problem:
 
-
-% \begin{equation}
 \begin{align}
 & \underset{\mathcal{X},\, r_k,\, \Delta}{\text{minimize}}
 & & \alpha_\Delta \mathcal{C}_\Delta + \alpha_{Entry} C_{Entry} \\
@@ -28,7 +28,6 @@ optimization problem:
 & & & \|p_f-p_T\|_2^2 < \epsilon \\
 & & & T \Delta - 2 \pi l_{max}r_k - 2l_{gripper} < 0 
 \end{align}
-% \end{equation}
 
 The costs and constraints in the above formulation are described below:
 
